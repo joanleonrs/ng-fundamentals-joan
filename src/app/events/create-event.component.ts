@@ -1,32 +1,37 @@
-import { Component } from '@angular/core'
-import { Router } from '@angular/router'
-import { EventService } from './shared/index'
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { EventService } from './shared/index';
+import { FormGroup, FormControl } from '@angular/forms';
 
 @Component({
   templateUrl: './create-event.component.html',
-  styles: [`
-    em {float:right; color:#E05C65; padding-left:10px;}
-    .error input {background-color:#E3C3C5;}
-    .error ::-webkit-input-placeholder { color: #999; }
-    .error :-moz-placeholder { color: #999; }
-    .error ::-moz-placeholder {color: #999; }
-    .error :ms-input-placeholder { color: #999; }
-  `]
+  styleUrls: ['./create.event.component.css']
 })
 export class CreateEventComponent {
-  newEvent
-  isDirty:boolean = true
-  constructor(private router: Router, private eventService:EventService) {
 
+  newEvent: any;
+  isDirty = true;
+  form: FormGroup;
+
+  constructor(private router: Router, private eventService: EventService) {
+    this.form = new FormGroup({
+      'newEventForm': new FormControl('', this.amountValidator)
+    });
   }
 
-  saveEvent(formValues) {
-    this.eventService.saveEvent(formValues)
-    this.isDirty = false
-    this.router.navigate(['/events'])
+  saveEvent(formValues: any) {
+    this.eventService.saveEvent(formValues);
+    this.isDirty = false;
+    this.router.navigate(['/events']);
   }
 
   cancel() {
-    this.router.navigate(['/events'])
+    this.router.navigate(['/events']);
+  }
+
+  amountValidator(control: FormControl): {[key: string]: any} {
+    const value: string = control.value || '';
+    const valid = value.match(/^\d{9}$/);
+    return valid ? null : {ssn: true};
   }
 }
